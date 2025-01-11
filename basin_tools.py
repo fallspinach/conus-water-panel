@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from datetime import date, datetime, timedelta
 
-from config import base_url, fnf_stations, fnf_id_names, graph_config, tool_style, tabtitle_style, tabtitle_selected_style, popup_ts_style
+from config import base_url, huc8_basins, fnf_id_names, graph_config, tool_style, tabtitle_style, tabtitle_selected_style, popup_ts_style, fig_ts_style
 
 # start to build maps
 ns = Namespace('dashExtensions', 'default')
@@ -36,9 +36,9 @@ def draw_system_status():
     return fig_system_status
 
 # draw basin average time series
-def draw_basin_ts(staid, ptype):
-    if staid in fnf_stations:
-        fcsv = f'{base_url}/data/{ptype}/averaged/{staid}_daily.csv'
+def draw_basin_ts(staid, ptype, btype):
+    if staid in huc8_basins:
+        fcsv = f'{base_url}/data/{ptype}/{btype}/{staid}_daily.csv'
         df = pd.read_csv(fcsv, parse_dates=True, index_col='Date')
         fig_nrt = go.Figure()
         fig_nrt.add_trace(go.Bar(x=df.index, y=df['PREC'], name='Precipitation'))
@@ -48,9 +48,10 @@ def draw_basin_ts(staid, ptype):
         if ptype=='retro':
             xrange = [df.index[0].to_pydatetime()-timedelta(days=150), df.index[-1].to_pydatetime()+timedelta(days=150)]
         else:
-            xrange = [df.index[0].to_pydatetime()-timedelta(days=10), df.index[-1].to_pydatetime()+timedelta(days=10)]
+            xrange = [df.index[0].to_pydatetime()-timedelta(days=5), df.index[-1].to_pydatetime()+timedelta(days=5)]
     else:
         fig_nrt = px.line(x=[2018, 2023], y=[0, 0], labels={'x': 'Data not available.', 'y': ''})
+        xrange = [datetime(2018, 1, 1), datetime(2023, 12, 31)]
     fig_nrt.update_layout(margin=dict(l=15, r=15, t=15, b=5), xaxis_range=xrange,
                           plot_bgcolor='#eeeeee',
                           legend=dict(title='', bgcolor='rgba(255,255,255,0.7)', yanchor='top', y=0.99, xanchor='right', x=0.92),
@@ -83,5 +84,20 @@ def get_basin_tools():
         dcc.Tab([system_status_tab],  label='System Status', value='tab-status', style=tabtitle_style, selected_style=tabtitle_selected_style),
     ], value='tab-status'))
 
+    ## pop-up window and its tabs/graphs
+    staid0     = '01010002'    
+    fig_nrt    = draw_basin_ts(staid0, 'nrt', 'huc8')
+    #fig_retro  = draw_basin_ts(staid0, 'retro', 'huc8')
+    graph_nrt  = dcc.Graph(id='basin-graph-nrt',   figure=fig_nrt,   style=fig_ts_style, config=graph_config)
+    #graph_retro= dcc.Graph(id='basin-graph-retro', figure=fig_retro, style=fig_ts_style, config=graph_config)
 
-    return basin_tools
+    tab_nrt   = dcc.Tab(label='NRT Monitor',  value='basin-nrt',   children=[dcc.Loading(id='loading-basin-nrt',  children=graph_nrt)],   style=tabtitle_style, selected_style=tabtitle_selected_style)
+    #tab_retro = dcc.Tab(label='Retrospective',value='basin-retro', children=[dcc.Loading(id='loading-basin-retro', children=graph_retro)], style=tabtitle_style, selected_style=tabtitle_selected_style)
+
+    popup_tabs = dcc.Tabs([tab_nrt], #tab_retro],
+                          id='basin-popup-tabs', value='basin-nrt')
+    basin_popup_plots = dbc.Offcanvas([popup_tabs],
+        title='HUC8 Basin', placement='top', is_open=False, scrollable=True, id='basin-popup-plots', style=popup_ts_style
+    )
+
+    return basin_tools, basin_popup_plots

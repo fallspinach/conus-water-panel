@@ -9,7 +9,7 @@ from site_tools import draw_retro, draw_mofor, draw_table, draw_table_all
 from basin_tools import draw_basin_ts
 from snow_tools import draw_course, draw_pillow
 from river_tools import draw_mofor_river_db, draw_rev_esp
-from config import base_url
+from config import base_url, cloud_url
 ## Callbacks from here on
 
 # callback to update data var in the title section
@@ -88,7 +88,8 @@ app.clientside_callback(
 @app.callback(Output(component_id='datepicker', component_property='max_date_allowed'),
               Input('interval-check_system', 'n_intervals'))
 def update_system_status(basin):
-    df_status = pd.read_csv(f'{base_url}/data/system_status.csv', parse_dates=True)
+    #df_status = pd.read_csv(f'{base_url}/data/system_status.csv', parse_dates=True)
+    df_status = pd.read_csv(f'{cloud_url}/imgs/monitor/system_status.csv', parse_dates=True)
     return datetime.fromisoformat(df_status['WRF-Hydro NRT'][1]).date()
 
 # callback to switch HUC sources according to zoom level
@@ -112,4 +113,27 @@ app.clientside_callback(
     Input('button-openmore', 'n_clicks'),
     State('collapse-openmore', 'is_open')
 )
+
+# create/update historic time series graph in popup
+@app.callback(Output(component_id='basin-graph-nrt',   component_property='figure'),
+              #Output(component_id='basin-graph-retro', component_property='figure'),
+              Output('basin-popup-plots', 'is_open'),
+              Output('basin-popup-plots', 'title'),
+              Input('huc-bound', 'clickData'))
+def update_basin(basin):
+    if 'huc8' in basin['properties']:
+        staid = basin['properties']['huc8']
+        stain = basin['properties']['tooltip']
+        is_open = True
+    else:
+        staid = ''
+        stain = ''
+        is_open = False
+
+    fig_nrt   = draw_basin_ts(staid, 'nrt', 'huc8')
+    #fig_retro = draw_basin_ts(staid, 'retro', 'huc8')
+
+    #return [fig_nrt, fig_retro, is_open, stain]
+    return [fig_nrt, is_open, stain]
+
 

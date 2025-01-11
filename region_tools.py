@@ -72,7 +72,7 @@ def get_region_tools():
                          style={'position': 'absolute', 'left': '18px', 'top': '140px', 'z-index': '500'})
 
     layers_region = [dl.Overlay([data_map, data_cbar], id='data-map-ol',  name='Data',   checked=True),
-                     dl.Overlay(huc_bound,      id='huc-ol', name='HUC', checked=False)]
+                     dl.Overlay(huc_bound,      id='huc-ol', name='HUC', checked=True)]
                      #dl.Overlay(nwm_rivers,       id='rivers-ol', name='Rivers', checked=False),
                      #dl.Overlay(b120_watersheds,  id='basins-ol', name='B120 Basins', checked=True),
                      #dl.Overlay(b120_points,      id='sites-ol',  name='B120 Sites',  checked=True),
@@ -195,7 +195,7 @@ def get_region_tools():
         dcc.Tab(clim_tab,     label='Climatology', value='clime',    style=tabtitle_style, selected_style=tabtitle_selected_style),
     ], value='timestep'))
 
-    basin_tools = get_basin_tools()
+    basin_tools,basin_popup_plots = get_basin_tools()
     gdoc_popup, fdoc_popup, docs_links = get_docs_links()
 
     side_content = html.Div([
@@ -203,7 +203,7 @@ def get_region_tools():
                     dbc.Row(control_time_sel),
                     dbc.Row(html.Div([
                         dbc.Button('More >>', id='button-openmore', size='sm', color='secondary', n_clicks=0),
-                        dbc.Collapse([dbc.Row(basin_tools)], #dbc.Row([docs_links, gdoc_popup])
+                        dbc.Collapse([dbc.Row([basin_tools, basin_popup_plots])], #dbc.Row([docs_links, gdoc_popup])
                                      id='collapse-openmore', is_open=False)
                         ]))
                     ], style={'width': '400px'})

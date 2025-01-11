@@ -102,3 +102,14 @@ app.clientside_callback(
     Input('map-region', 'zoom')
 )
 
+# callback to toggle collapse-openmore
+app.clientside_callback(
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='toggle_openmore'
+    ),
+    Output('collapse-openmore', 'is_open'),
+    Input('button-openmore', 'n_clicks'),
+    State('collapse-openmore', 'is_open')
+)
+

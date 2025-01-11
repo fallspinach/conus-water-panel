@@ -201,12 +201,15 @@ def get_region_tools():
     side_content = html.Div([
                     dbc.Row(control_data_sel),
                     dbc.Row(control_time_sel),
-                    dbc.Row(basin_tools),
-                    #dbc.Row([docs_links, gdoc_popup])
+                    dbc.Row(html.Div([
+                        dbc.Button('More >>', id='button-openmore', size='sm', color='secondary', n_clicks=0),
+                        dbc.Collapse([dbc.Row(basin_tools)], #dbc.Row([docs_links, gdoc_popup])
+                                     id='collapse-openmore', is_open=False)
+                        ]))
                     ], style={'width': '400px'})
 
     # offcavas using dropdown menu
-    side_canvas = dbc.DropdownMenu(label='', children=[side_content], direction='start', id='side-canvas', style={'position': 'absolute', 'top': '70px', 'right': '23px', 'z-index': '500', 'opacity': '0.9'})
+    side_canvas = dbc.DropdownMenu(label='', children=[side_content], direction='start', id='side-canvas', color='secondary', style={'position': 'absolute', 'top': '70px', 'right': '23px', 'z-index': '500', 'opacity': '0.9'})
 
     return map_region, title_var, title_date, side_canvas
 

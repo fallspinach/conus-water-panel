@@ -144,7 +144,7 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
             if (zoom_level<7) {
                 return ['assets/huc2_conus_0.5_tooltip.pbf', true];
             } else if (zoom_level<9) {
-                return ['assets/huc4_conus_0.5_tooltip.pbf', false];
+                return ['assets/huc4_conus_0.5_tooltip.pbf', true];
             } else {
                 return ['assets/huc8_conus_1.0_tooltip.pbf', false];
             }
@@ -158,6 +158,16 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         // open the pop-up window for forcing doc
         open_fdoc: function(n_clicks) {
             return true;
+        },
+
+        // toggle collapse-openmore
+        toggle_openmore: function(n_clicks, is_open) {
+            if (n_clicks>0) {
+		return !is_open;
+            }
+            else {
+                return is_open;
+            }
         }
 
     }

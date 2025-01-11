@@ -18,7 +18,7 @@ app.index_string = '''
 <html>
     <head>
         {%metas%}
-        <title>Water Panel (experimental & internal use only)</title>
+        <title>CONUS Water Panel (experimental & internal use only)</title>
         {%favicon%}
         {%css%}
     </head>

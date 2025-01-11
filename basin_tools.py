@@ -38,8 +38,11 @@ def draw_system_status():
 # draw basin average time series
 def draw_basin_ts(staid, ptype, btype):
     if staid in huc8_basins:
-        fcsv = f'{base_url}/data/{ptype}/{btype}/{staid}_daily.csv'
-        df = pd.read_csv(fcsv, parse_dates=True, index_col='Date')
+        fcsv = f'{base_url}/data/{ptype}/{btype}/{staid[:2]}_daily.csv.gz'
+        df_all = pd.read_csv(fcsv, compression='gzip', parse_dates=True, index_col='Date', dtype={'HUC8': str})
+        df = df_all[df_all['HUC8']==staid]
+        #print(df_all.head())
+        #print(df.head())
         fig_nrt = go.Figure()
         fig_nrt.add_trace(go.Bar(x=df.index, y=df['PREC'], name='Precipitation'))
         fig_nrt.add_trace(go.Scatter(x=df.index, y=df['T2D'], name='Air Temperature', mode='markers', line=go.scatter.Line(color='orange'), yaxis='y2'))

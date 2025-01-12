@@ -163,10 +163,12 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         // toggle collapse-openmore
         toggle_openmore: function(n_clicks, is_open) {
             if (n_clicks>0) {
-		return !is_open;
+                if (is_open) { return [!is_open, 'More »']; }
+                else         { return [!is_open, 'Less «']; }
             }
             else {
-                return is_open;
+                if (is_open) { return [is_open, 'Less «']; }
+                else         { return [is_open, 'More »']; }
             }
         }
 

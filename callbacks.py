@@ -110,6 +110,7 @@ app.clientside_callback(
         function_name='toggle_openmore'
     ),
     Output('collapse-openmore', 'is_open'),
+    Output('button-openmore', 'children'),
     Input('button-openmore', 'n_clicks'),
     State('collapse-openmore', 'is_open')
 )

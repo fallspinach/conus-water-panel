@@ -202,7 +202,7 @@ def get_region_tools():
                     dbc.Row(control_data_sel),
                     dbc.Row(control_time_sel),
                     dbc.Row(html.Div([
-                        dbc.Button('More >>', id='button-openmore', size='sm', color='secondary', n_clicks=0),
+                        dbc.Button('More »', id='button-openmore', size='sm', color='secondary', n_clicks=0, style={'width': '70px'}),
                         dbc.Collapse([dbc.Row([basin_tools, basin_popup_plots])], #dbc.Row([docs_links, gdoc_popup])
                                      id='collapse-openmore', is_open=False)
                         ]))

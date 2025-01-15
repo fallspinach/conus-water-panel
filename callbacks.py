@@ -116,8 +116,10 @@ app.clientside_callback(
 )
 
 # create/update historic time series graph in popup
-@app.callback(Output(component_id='basin-graph-nrt',   component_property='figure'),
-              #Output(component_id='basin-graph-retro', component_property='figure'),
+@app.callback(Output(component_id='basin-graph-nrt',     component_property='figure'),
+              Output(component_id='basin-graph-nrt-m',   component_property='figure'),
+              Output(component_id='basin-graph-retro',   component_property='figure'),
+              Output(component_id='basin-graph-retro-m', component_property='figure'),
               Output('basin-popup-plots', 'is_open'),
               Output('basin-popup-plots', 'title'),
               Input('huc-bound', 'clickData'))
@@ -131,10 +133,12 @@ def update_basin(basin):
         stain = ''
         is_open = False
 
-    fig_nrt   = draw_basin_ts(staid, 'nrt', 'huc8')
-    #fig_retro = draw_basin_ts(staid, 'retro', 'huc8')
+    fig_nrt     = draw_basin_ts(staid, 'nrt', 'huc8', 'daily')
+    fig_nrt_m   = draw_basin_ts(staid, 'nrt', 'huc8', 'monthly')
+    fig_retro   = draw_basin_ts(staid, 'retro', 'huc8', 'daily')
+    fig_retro_m = draw_basin_ts(staid, 'retro', 'huc8', 'monthly')
 
-    #return [fig_nrt, fig_retro, is_open, stain]
-    return [fig_nrt, is_open, stain]
+    return [fig_nrt, fig_nrt_m, fig_retro, fig_retro_m, is_open, stain]
+    #return [fig_nrt, is_open, stain]
 
 

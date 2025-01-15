@@ -6,15 +6,16 @@ from dash_extensions.javascript import Namespace, arrow_function
 from datetime import date, datetime, timedelta
 import pandas as pd
 
-from config import base_url, map_tiles, domain_config, data_vars, tool_style, tabtitle_style, tabtitle_selected_style
+from config import base_url, cloud_url, map_tiles, domain_config, data_vars, tool_style, tabtitle_style, tabtitle_selected_style
 
 from basin_tools  import get_basin_tools
 from docs_links   import get_docs_links
 
 def get_region_tools():
     
-    df_system_status = pd.read_csv(f'{base_url}/data/system_status.csv', parse_dates=True)
-    
+    #df_system_status = pd.read_csv(f'{base_url}/data/system_status.csv', parse_dates=True)
+    df_system_status = pd.read_csv(f'{cloud_url}/imgs/monitor/system_status.csv', parse_dates=True)
+ 
     last_whnrt = datetime.fromisoformat(df_system_status['WRF-Hydro NRT'][1]).date()
     #last_whnrt = datetime.fromisoformat(df_system_status['WRF-Hydro Monitor'][1]).date()
     data_start = date(2023, 10, 1)
@@ -149,9 +150,9 @@ def get_region_tools():
 
     ## figure title
     title_var  = html.Div(data_vars[data_var_selected]['label'], id='title-var',
-                          style={'position': 'absolute', 'left': '50px', 'top': '745px', 'z-index': '500', 'font-size': 'medium'})
+                          style={'position': 'absolute', 'left': '50px',  'bottom': '25px', 'z-index': '500', 'font-size': 'medium'})
     title_date = html.Div(last_whnrt.strftime(' @ %Y-%m-%d '), id='title-date',
-                          style={'position': 'absolute', 'left': '245px', 'top': '745px', 'z-index': '500', 'font-size': 'medium'})
+                          style={'position': 'absolute', 'left': '245px', 'bottom': '25px', 'z-index': '500', 'font-size': 'medium'})
 
     title_zone = html.Div([title_var, title_date], id='title-zone')
 

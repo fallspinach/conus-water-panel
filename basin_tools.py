@@ -36,9 +36,10 @@ def draw_system_status():
     return fig_system_status
 
 # draw basin average time series
-def draw_basin_ts(staid, ptype, btype):
+def draw_basin_ts(staid, ptype, btype, freq):
+    punits = 'mm/day' if freq=='daily' else 'mm/mon'
     if staid in huc8_basins:
-        fcsv = f'{base_url}/data/{ptype}/{btype}/{staid[:2]}_daily.csv.gz'
+        fcsv = f'{base_url}/data/{ptype}/{btype}/{staid[:4]}_{freq}.csv.gz'
         df_all = pd.read_csv(fcsv, compression='gzip', parse_dates=True, index_col='Date', dtype={'HUC8': str})
         df = df_all[df_all['HUC8']==staid]
         #print(df_all.head())
@@ -60,7 +61,7 @@ def draw_basin_ts(staid, ptype, btype):
                           legend=dict(title='', bgcolor='rgba(255,255,255,0.7)', yanchor='top', y=0.99, xanchor='right', x=0.92),
                           hovermode='x unified',
 xaxis=dict(domain=[0.07, 0.93]),
-yaxis =dict(title=dict(text='Precipitation (mm/day)', font=dict(color='blue')), tickfont=dict(color='blue')),
+yaxis =dict(title=dict(text=f'Precipitation ({punits})', font=dict(color='blue')), tickfont=dict(color='blue')),
 yaxis2=dict(title=dict(text="Air Temperature (C)", font=dict(color='orange')), tickfont=dict(color='orange'), anchor='free', overlaying='y', side='left', position=0.03),
 yaxis3=dict(title=dict(text="Snow Water Equivalent (mm)", font=dict(color='magenta')), tickfont=dict(color='magenta'), anchor='x', overlaying='y', side='right'),
 yaxis4=dict(title=dict(text="Total Soil Moisture (%)", font=dict(color='green')), tickfont=dict(color='green'), anchor='free', overlaying='y', side='right', position=0.97),
@@ -88,16 +89,22 @@ def get_basin_tools():
     ], value='tab-status'))
 
     ## pop-up window and its tabs/graphs
-    staid0     = '01010002'    
-    fig_nrt    = draw_basin_ts(staid0, 'nrt', 'huc8')
-    #fig_retro  = draw_basin_ts(staid0, 'retro', 'huc8')
-    graph_nrt  = dcc.Graph(id='basin-graph-nrt',   figure=fig_nrt,   style=fig_ts_style, config=graph_config)
-    #graph_retro= dcc.Graph(id='basin-graph-retro', figure=fig_retro, style=fig_ts_style, config=graph_config)
+    staid0       = '01010002'    
+    fig_nrt      = draw_basin_ts(staid0, 'nrt', 'huc8', 'daily')
+    fig_nrt_m    = draw_basin_ts(staid0, 'nrt', 'huc8', 'monthly')
+    fig_retro    = draw_basin_ts(staid0, 'retro', 'huc8', 'daily')
+    fig_retro_m  = draw_basin_ts(staid0, 'retro', 'huc8', 'monthly')
+    graph_nrt    = dcc.Graph(id='basin-graph-nrt',     figure=fig_nrt,   style=fig_ts_style, config=graph_config)
+    graph_nrt_m  = dcc.Graph(id='basin-graph-nrt-m',   figure=fig_nrt,   style=fig_ts_style, config=graph_config)
+    graph_retro  = dcc.Graph(id='basin-graph-retro',   figure=fig_retro, style=fig_ts_style, config=graph_config)
+    graph_retro_m= dcc.Graph(id='basin-graph-retro-m', figure=fig_retro, style=fig_ts_style, config=graph_config)
 
-    tab_nrt   = dcc.Tab(label='NRT Monitor',  value='basin-nrt',   children=[dcc.Loading(id='loading-basin-nrt',  children=graph_nrt)],   style=tabtitle_style, selected_style=tabtitle_selected_style)
-    #tab_retro = dcc.Tab(label='Retrospective',value='basin-retro', children=[dcc.Loading(id='loading-basin-retro', children=graph_retro)], style=tabtitle_style, selected_style=tabtitle_selected_style)
+    tab_nrt     = dcc.Tab(label='NRT Monitor (daily)',    value='basin-nrt',     children=[dcc.Loading(id='loading-basin-nrt',     children=graph_nrt)],     style=tabtitle_style, selected_style=tabtitle_selected_style)
+    tab_nrt_m   = dcc.Tab(label='NRT Monitor (monthly)',  value='basin-nrt-m',   children=[dcc.Loading(id='loading-basin-nrt-m',   children=graph_nrt_m)],   style=tabtitle_style, selected_style=tabtitle_selected_style)
+    tab_retro   = dcc.Tab(label='Retrospective (daily)',  value='basin-retro',   children=[dcc.Loading(id='loading-basin-retro',   children=graph_retro)],   style=tabtitle_style, selected_style=tabtitle_selected_style)
+    tab_retro_m = dcc.Tab(label='Retrospective (monthly)',value='basin-retro-m', children=[dcc.Loading(id='loading-basin-retro-m', children=graph_retro_m)], style=tabtitle_style, selected_style=tabtitle_selected_style)
 
-    popup_tabs = dcc.Tabs([tab_nrt], #tab_retro],
+    popup_tabs = dcc.Tabs([tab_nrt, tab_nrt_m, tab_retro, tab_retro_m],
                           id='basin-popup-tabs', value='basin-nrt')
     basin_popup_plots = dbc.Offcanvas([popup_tabs],
         title='HUC8 Basin', placement='top', is_open=False, scrollable=True, id='basin-popup-plots', style=popup_ts_style

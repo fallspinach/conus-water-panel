@@ -38,10 +38,10 @@ def draw_system_status():
 # draw basin average time series
 def draw_basin_ts(staid, ptype, btype, freq):
     punits = 'mm/day' if freq=='daily' else 'mm/mon'
-    if staid in huc8_basins:
+    if staid[:8] in huc8_basins:
         fcsv = f'{base_url}/data/{ptype}/{btype}/{staid[:4]}_{freq}.csv.gz'
-        df_all = pd.read_csv(fcsv, compression='gzip', parse_dates=True, index_col='Date', dtype={'HUC8': str})
-        df = df_all[df_all['HUC8']==staid]
+        df_all = pd.read_csv(fcsv, compression='gzip', parse_dates=True, index_col='Date', dtype={btype.upper(): str})
+        df = df_all[df_all[btype.upper()]==staid]
         #print(df_all.head())
         #print(df.head())
         fig_nrt = go.Figure()
@@ -107,7 +107,7 @@ def get_basin_tools():
     popup_tabs = dcc.Tabs([tab_nrt, tab_nrt_m, tab_retro, tab_retro_m],
                           id='basin-popup-tabs', value='basin-nrt')
     basin_popup_plots = dbc.Offcanvas([popup_tabs],
-        title='HUC8 Basin', placement='top', is_open=False, scrollable=True, id='basin-popup-plots', style=popup_ts_style
+        title='HUC Basin', placement='top', is_open=False, scrollable=True, id='basin-popup-plots', style=popup_ts_style
     )
 
     return basin_tools, basin_popup_plots

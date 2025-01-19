@@ -143,10 +143,14 @@ window.dash_clientside = Object.assign({}, window.dash_clientside, {
         switch_huc: function(zoom_level) {
             if (zoom_level<7) {
                 return ['assets/huc2_conus_0.5_tooltip.pbf', true];
-            } else if (zoom_level<9) {
+            } else if (zoom_level<8) {
                 return ['assets/huc4_conus_0.5_tooltip.pbf', true];
-            } else {
+            } else if (zoom_level<9) {
+                return ['assets/huc6_conus_0.7_tooltip.pbf', true];
+            } else if (zoom_level<10) {
                 return ['assets/huc8_conus_1.0_tooltip.pbf', false];
+            } else {
+                return ['assets/huc10_conus_1.0_tooltip.pbf', false];
             }
         },
 

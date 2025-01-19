@@ -28,7 +28,7 @@
     border: 1px solid #ccc !important;
     padding: 0px;
 }
-#_dash-app-content {
+#react-entry-point, #_dash-app-content {
   height: 100vh;
 }
 

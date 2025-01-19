@@ -124,19 +124,25 @@ app.clientside_callback(
               Output('basin-popup-plots', 'title'),
               Input('huc-bound', 'clickData'))
 def update_basin(basin):
+    huc = 'huc8'
     if 'huc8' in basin['properties']:
         staid = basin['properties']['huc8']
         stain = basin['properties']['tooltip']
         is_open = True
+    elif 'huc10' in basin['properties']:
+        staid = basin['properties']['huc10']
+        stain = basin['properties']['tooltip']
+        is_open = True
+        huc = 'huc10'
     else:
         staid = ''
         stain = ''
         is_open = False
 
-    fig_nrt     = draw_basin_ts(staid, 'nrt', 'huc8', 'daily')
-    fig_nrt_m   = draw_basin_ts(staid, 'nrt', 'huc8', 'monthly')
-    fig_retro   = draw_basin_ts(staid, 'retro', 'huc8', 'daily')
-    fig_retro_m = draw_basin_ts(staid, 'retro', 'huc8', 'monthly')
+    fig_nrt     = draw_basin_ts(staid, 'nrt', huc, 'daily')
+    fig_nrt_m   = draw_basin_ts(staid, 'nrt', huc, 'monthly')
+    fig_retro   = draw_basin_ts(staid, 'retro', huc, 'daily')
+    fig_retro_m = draw_basin_ts(staid, 'retro', huc, 'monthly')
 
     return [fig_nrt, fig_nrt_m, fig_retro, fig_retro_m, is_open, stain]
     #return [fig_nrt, is_open, stain]
